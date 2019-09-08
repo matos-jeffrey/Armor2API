@@ -43,61 +43,87 @@ namespace Armor2BuildAPI.Controllers
             return mod;
         }
 
-        // PUT: api/Mods/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMod(int id, Mod mod)
+        [HttpGet("{affinity}/{armor}")]
+        public async Task<ActionResult<IEnumerable<Mod>>> GetMod(string affinity,string armor)
         {
-            if (id != mod.ModID)
-            {
-                return BadRequest();
-            }
+            var mod = await _context.Mod.Where(h => h.Armor == armor && (h.Affinity == affinity || h.Affinity == "Neutral")).ToListAsync();
 
-            _context.Entry(mod).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ModExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Mods
-        [HttpPost]
-        public async Task<ActionResult<Mod>> PostMod(Mod mod)
-        {
-            _context.Mod.Add(mod);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetMod", new { id = mod.ModID }, mod);
-        }
-
-        // DELETE: api/Mods/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Mod>> DeleteMod(int id)
-        {
-            var mod = await _context.Mod.FindAsync(id);
             if (mod == null)
             {
                 return NotFound();
             }
 
-            _context.Mod.Remove(mod);
-            await _context.SaveChangesAsync();
+            return mod;
+        }
+
+        [HttpGet("General/{affinity}")]
+        public async Task<ActionResult<IEnumerable<Mod>>> GetMod(string affinity)
+        {
+            var mod = await _context.Mod.Where(h => (h.Armor == "General" && h.Affinity == "Neutral") || (h.Armor == "General" && h.Affinity == affinity)).ToListAsync();
+
+            if (mod == null)
+            {
+                return NotFound();
+            }
 
             return mod;
         }
+
+        //// PUT: api/Mods/5
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutMod(int id, Mod mod)
+        //{
+        //    if (id != mod.ModID)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    _context.Entry(mod).State = EntityState.Modified;
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ModExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+
+        //    return NoContent();
+        //}
+
+        //// POST: api/Mods
+        //[HttpPost]
+        //public async Task<ActionResult<Mod>> PostMod(Mod mod)
+        //{
+        //    _context.Mod.Add(mod);
+        //    await _context.SaveChangesAsync();
+
+        //    return CreatedAtAction("GetMod", new { id = mod.ModID }, mod);
+        //}
+
+        //// DELETE: api/Mods/5
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult<Mod>> DeleteMod(int id)
+        //{
+        //    var mod = await _context.Mod.FindAsync(id);
+        //    if (mod == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.Mod.Remove(mod);
+        //    await _context.SaveChangesAsync();
+
+        //    return mod;
+        //}
 
         private bool ModExists(int id)
         {
